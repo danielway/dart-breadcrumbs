@@ -55,6 +55,7 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
       NonLocalVariableHandler,
       NamedTypeHandler,
       UnitTestHandler,
+      OverReactHandler,
     )
   }
 
@@ -144,6 +145,31 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
         if (argumentExpressions[0] is DartStringLiteralExpression) {
           return StringUtil.unquoteString(argumentExpressions[0].text)
         }
+      }
+
+      return null
+    }
+  }
+
+  /**
+   * Generates crumbs for UI components from the `over_react` library.
+   */
+  private object OverReactHandler : ElementHandler<DartCallExpression>(DartCallExpression::class.java) {
+    override fun accepts(element: DartCallExpression): Boolean = getComponentElement(element) != null
+
+    override fun getElementInfo(element: DartCallExpression): String = getComponentElement(element)!!.text
+
+    private fun getComponentElement(element: DartCallExpression): PsiElement? {
+      val expression = element.expression
+
+      // Matches the form: Component()(<caret>)
+      if (expression is DartCallExpression) {
+        return expression.expression
+      }
+
+      // Matches the form: (Component()..property = "")(<caret>)
+      if (expression is DartParenthesizedExpression) {
+        return (expression.expression?.firstChild as? DartCallExpression)?.expression
       }
 
       return null

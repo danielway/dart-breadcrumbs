@@ -64,6 +64,14 @@ public class DartBreadcrumbsTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testOverReact() {
+    doTest();
+  }
+
+  public void testOverReactProps() {
+    doTest();
+  }
+
   public void testSetter() {
     doTest();
   }

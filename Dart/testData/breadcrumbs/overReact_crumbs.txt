@@ -1,0 +1,4 @@
+getComponent
+A
+C
+E
